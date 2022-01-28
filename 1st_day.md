@@ -1,4 +1,4 @@
-# Pipeline 1st day
+# 1st days
 
 1. Coneccting to the EBD server:
 
@@ -69,24 +69,115 @@ cd TransPi
 ```
   While installing we were asked for some parameters and we choose the following ones:
 
-BUSCO V4 database: vertebrata_odb10
-UNIPROT database: uniprot_metazoa_33208
-NEXTFLOW installation: yes
-
-The final message when the installation finished was this:
-
 ```
--- If no "ERROR" was found and all the neccesary databases are installed proceed to run TransPi --
+
+     #########################################################################################
+     #                                                                                       #
+     #                             TransPi precheck script                                   #
+     #                                                                                       #
+     #   Options available:                                                                  #
+     #                                                                                       #
+     #        1- Install conda (if neccesary) and DBs                                        #
+     #                                                                                       #
+     #               Runs of TransPi using conda                                             #
+     #                                                                                       #
+     #        2- Install DBs for containers use                                              #
+     #                                                                                       #
+     #               Runs of TransPi with containers (docker or singularity)                 #
+     #                                                                                       #
+     #        3- Update DBs                                                                  #
+     #                                                                                       #
+     #               SwissProt, PFAM, SQL DB used for annotation (requires conda)            #
+     #                                                                                       #
+     #        4- Exit                                                                        #
+     #                                                                                       #
+     #########################################################################################
 
 
-        -- INFO to use in TransPi --
+          Which option you want? 1
 
-        Installation PATH:      /home/igmestre/TFM_Paula/TransPi
-        BUSCO V4 database:      /home/igmestre/TFM_Paula/TransPi/DBs/busco_db/vertebrata_odb10
-        UNIPROT database:       /home/igmestre/TFM_Paula/TransPi/DBs/uniprot_db/uniprot_metazoa_33208.fasta
-        UNIPROT last update:    Mon Jan 24 21:50:08 UTC 2022
-        PFAM files:             /home/igmestre/TFM_Paula/TransPi/DBs/hmmerdb/Pfam-A.hmm
-        PFAM last update:       Wed Jan 26 08:18:14 UTC 2022
-        SQL DB last update:     Wed Jan 26 08:17:57 UTC 2022
-        NEXTFLOW:               /home/igmestre/TFM_Paula/TransPi/nextflow
+
+         -- Either TransPi install the DBs for you or you provide the PATH of the DBs --
+
+         Do you want TransPi to handle the DBs installation? (y,n,exit): y
+
+         -- Selecting BUSCO V4 database --
+
+1) BACTERIA
+2) EUKARYOTA
+3) ARCHAEA
+4) EXIT
+
+Please select one (1-5): 2
+
+You selected EUKARYOTA. Which specific database?
+
+1) Eukaryota_(Superkingdom)    6) Vertebrata_(Sub_phylum)
+2) Arthropoda_(Phylum)         7) Metazoa_(Other)
+3) Fungi_(Kingdom)             8) Mollusca_(Other)
+4) Plants_(Kingdom)            9) Nematoda_(Other)
+5) Protists_(Clade)           10) MAIN_MENU
+
+    Please select database:6
+
+1) Vertebrata_(Sub_phylum)
+2) Actinopterygii_(Superclass_and_Class)
+3) Aves_(Superclass_and_Class)
+4) Mammalia_(Superclass_and_Class)
+5) Tetrapoda_(Superclass_and_Class)
+6) Carnivora_(Superorder_and_Order)
+7) Cyprinodontiformes_(Superorder_and_Order)
+8) Euarchontoglires_(Superorder_and_Order)
+9) Laurasiatheria_(Superorder_and_Order)
+10) Passeriformes_(Superorder_and_Order)
+11) Primates_(Superorder_and_Order)
+12) Cetartiodactyla_(Other)
+13) Eutheria_(Other)
+14) Glires_(Other)
+15) Sauropsida_(Other)
+16) MAIN_MENU
+
+
+Please select database: 1
+
+-- BUSCO V4 "Vertebrata_(Sub_phylum)" database found --
+
+
+-- UNIPROT database directory found at: /home/igmestre/TFM_Paula/TransPi/DBs/uniprot_db --
+
+
+-- Here is the list of UNIPROT files found at: /home/igmestre/TFM_Paula/TransPi/DBs/uniprot_db --
+
+1) uniprot_metazoa_33208.fasta
+
+Please select UNIPROT database to use:1
+
+
+
+         -- Databases (PFAM,SwissProt,EggNOG,GO) last update: Wed Jan 26 08:17:57 UTC 2022 --
+
+
+         -- Directory for the HMMER database is present --
+
+
+         -- Pfam file is present and ready to be used --
+
+
+         -- Pfam last update: Wed Jan 26 08:18:14 UTC 2022 --
+
+
+         -- If no "ERROR" was found and all the neccesary databases are installed proceed to run TransPi --
+
+
+         -- INFO to use in TransPi --
+
+         Installation PATH:      /home/igmestre/TFM_Paula/TransPi
+         BUSCO V4 database:      /home/igmestre/TFM_Paula/TransPi/DBs/busco_db/vertebrata_odb10
+         UNIPROT database:       /home/igmestre/TFM_Paula/TransPi/DBs/uniprot_db/uniprot_metazoa_33208.fasta
+         UNIPROT last update:    Mon Jan 24 21:50:08 UTC 2022
+         PFAM files:             /home/igmestre/TFM_Paula/TransPi/DBs/hmmerdb/Pfam-A.hmm
+         PFAM last update:       Wed Jan 26 08:18:14 UTC 2022
+         SQL DB last update:     Wed Jan 26 08:17:57 UTC 2022
+         NEXTFLOW:               /home/igmestre/TFM_Paula/TransPi/nextflow
+
 ```
