@@ -1,6 +1,6 @@
-# 1st days
+# 28/01/2022
 
-1. Conecting to the EBD server:
+1. Connecting to the EBD server:
 
 ``` {bash}
 ssh igmestre@genomics-a.ebd.csic.es
@@ -181,3 +181,10 @@ Please select UNIPROT database to use:1
          NEXTFLOW:               /home/igmestre/TFM_Paula/TransPi/nextflow
 
 ```
+
+
+# 29/01/2022
+
+# 30/01/2022
+
+# 31/01/2022
