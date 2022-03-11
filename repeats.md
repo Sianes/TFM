@@ -26,8 +26,15 @@ cd repeatmasker
 
 # trim using sed, to keap fasta hearders only up to first space.
 
-sed 's/\s.*$//' ../transcriptomes_transpi/results/evigene/pelobates_merged_reads.combined.okay.fa  > pelobates_transpi.fa
-sed 's/\s.*$//' ../transcriptomes_transpi/results/evigene/scaphiopus_merged_reads.combined.okay.fa > scaphiopus_transpi.fa
+sed 's/\s.*$//' ../transcriptomes_transpi/results/evigene/pelobates_merged_reads.combined.okay.fa  > pelobates_tmp.fa
+sed 's/\s.*$//' ../transcriptomes_transpi/results/evigene/scaphiopus_merged_reads.combined.okay.fa > scaphiopus_tmp.fa
+
+# some names are still too long so we can also remove "_length_271_cov_2.839130"-type information:
+
+sed 's/_length_[[:digit:]]\+_cov_[[:digit:]]\+\.[[:digit:]]\+//'  pelobates_tmp.fa  > pelobates_transpi.fa
+sed 's/_length_[[:digit:]]\+_cov_[[:digit:]]\+\.[[:digit:]]\+//'  scaphiopus_tmp.fa  > scaphiopus_transpi.fa
+rm pelobates_tmp.fa scaphiopus_tmp.fa
+
 ```
 
 3. Run RepeatMasker
