@@ -5,7 +5,7 @@ For the purpose of characterizing repetitive elements in the transcriptomes we w
 
 1. Install software
 
-in the envTFM conda environment, we install both software with conda:
+In the envTFM conda environment, we install both software with conda:
 
 ```{bash}
 conda install -c bioconda repeatmasker
@@ -13,3 +13,28 @@ conda install -c bioconda repeatmodeler
 ```
 
 This handles the installation of all dependencies, such as Perl5.
+
+2. Prepare transcriptome assemblies
+
+We will use the evigene .okay.fa assemblies. These have very long sequence names which are not compatible with some programs like RepeatMasker. For this reason, we have to update them
+
+```{bash}
+cd $HOME/igmestre/TFM_Paula/
+mkdir repeatmasker
+cd repeatmasker
+
+# trim using sed, to keap fasta hearders only up to first space.
+
+sed 's/\s.*$//' ../transcriptomes_transpi/results/evigene/pelobates_merged_reads.combined.okay.fa  > pelobates_transpi.fa
+sed 's/\s.*$//' ../transcriptomes_transpi/results/evigene/scaphiopus_merged_reads.combined.okay.fa > scaphiopus_transpi.fa
+```
+
+3. Run RepeatMasker
+
+For now, we are running RepeatMasker with default settings, only restricting the database to vertebrates and setting parallel to use 10 threads
+
+```{bash}
+RepeatMasker pelobates_transpi.fa --species vertebrates -par 10
+RepeatMasker scaphiopus_transpi.fa --species vertebrates -par 10
+
+```
