@@ -302,3 +302,21 @@ cat *_2.fastq.gz > path/to/directory/pelobates_merged_reads_R2.fastq.gz &
 The old transpi results are in a directory called “transpi_individual_reads”.
 
 The scaphiopus files were merged as well and are running at the same time as Pelobates, results will be in a new “transcriptomes_transi” directory.
+
+### 11/03
+#### Counting genes
+
+```{bash}
+(base) [igmestre@genomics_a evigene]$ cat pelobates_merged_reads.combined.fa | grep -c ">"
+14727012
+(base) [igmestre@genomics_a evigene]$ cat pelobates_merged_reads.combined.okay.fa | grep -c ">"
+435724
+
+(base) [igmestre@genomics_a evigene]$ cat scaphiopus_merged_reads.combined.fa | grep -c ">"
+12899026
+(base) [igmestre@genomics_a evigene]$ cat scaphiopus_merged_reads.combined.okay.fa | grep -c ">"
+386155
+```
+The results are the number of total genes we see on the report. We have to use **RepeatMasker** to screens DNA sequences for interspersed repeats and low complexity DNA sequences.The output of the program is a detailed annotation of the repeats that are present in the query sequence as well as a modified version of the query sequence in which all the annotated repeats have been masked (default: replaced by Ns).
+So first we have to install RepeatMasker in our conda environment.
+
