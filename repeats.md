@@ -17,7 +17,7 @@ This handles the installation of all dependencies, such as Perl5.
 
 2. Prepare transcriptome assemblies
 
-We will use the evigene .okay.fa assemblies. These have very long sequence names which are not compatible with some programs like RepeatMasker. For this reason, we have to update them
+We will use the evigene .okay.fa assemblies. These have very long sequence names which are not compatible with some programs like RepeatMasker (max 50 characters allowed). For this reason, we have to shorten the names/ fasta headers.
 
 ```{bash}
 cd $HOME/igmestre/TFM_Paula/
