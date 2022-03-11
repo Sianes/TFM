@@ -7,7 +7,7 @@ _add some information here about what the project and the purpose of this websit
 
 * [How to connect to the EBD server and navigate linux](linux_basics.md)
 * [Running the TransPi pipeline](transpi.md)
-* [Finding repeats]()
+* [Finding repeats](repeats.md)
 * [Differential gene expression]()
 * [My Diary](diary.md)
 
