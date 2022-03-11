@@ -13,4 +13,4 @@
 
 3. Find expression of specific genes related to repetitive elements
 
-- [ ]
+- [ ] DeSeq2
