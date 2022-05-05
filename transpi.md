@@ -2,14 +2,16 @@
 
 [TransPi](https://github.com/PalMuc/TransPi) is a [Nextflow](https://www.nextflow.io/) pipeline for de Novo transcriptome assembly.
 
-__add more information here about what this does__
+TransPi tries to perform the best assembly using diverses assamblers as trinity, SOAP, Velvet and rnaSPAdes and joining them with [EviGene](http://arthropods.eugenes.org/EvidentialGene/evigene/). It uses different parameters to then get a non-redundant consensus assembly. It also performs other valuable analyses such as pre quality check and filtering, quality assessment of the assembly, BUSCO scores, Transdecoder (ORFs), and gene ontologies (Trinotate), etc. When finished it returns a report with information about the assembly and files with the different results.
 
-We use this pipeline here to assemble transcriptomes for two amphibians species [Pelobates cultripes](https://en.wikipedia.org/wiki/Pelobates_cultripes) and [Scaphiopus couchii](https://en.wikipedia.org/wiki/Couch%27s_spadefoot_toad).
+TransPi is developed in Nextflow, which is  a workflow framework that can be used by a bioinformatician to integrate all of their bash, python, perl or other scripts into a one cohesive pipeline that are portable, reproducible, scalable and checkpointed. Therefore, the analyses are performed with minimal user input but without losing the potential of a comprehensive analysis.
+
+We use this pipeline here to assemble transcriptomes for two amphibians species [Pelobates cultripes](https://en.wikipedia.org/wiki/Pelobates_cultripes) and [Scaphiopus couchii](https://en.wikipedia.org/wiki/Couch%27s_spadefoot_toad) as our [study system](https://sianes.github.io/TFM/Study_system.html). 
 
 The pipeline was run with the following commands:
 
 
-## 1. merging all fastq files
+## 1. Merging all fastq files
 
 FASTQ format is a text-based format for storing both a biological sequence (usually nucleotide sequence) and its corresponding quality scores. Both the sequence letter and quality score are each encoded with a single ASCII character for brevity.
 
