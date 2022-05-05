@@ -203,4 +203,4 @@ We used the recommended parametres:
 -profile             Use conda to run the analyses
 ```
 
-If there is any error report you can search on their [GitHub issues page](https://github.com/PalMuc/TransPi/issues/34) and when solved you can keep running from the last step with the command --resume in the launch command above.
+If there is any error report you can search on their [GitHub issues page](https://github.com/PalMuc/TransPi/issues) and when solved you can keep running from the last step with the command --resume in the launch command above.
