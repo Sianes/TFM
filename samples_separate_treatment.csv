@@ -1,0 +1,25 @@
+﻿species;treatment;sample;sequence;time;water_level
+Pelobates cultripes;24h_H;Pc_24h_H_4;Pc_24h_H_4_hybrid;24h;H
+Pelobates cultripes;24h_H;Pc_24h_H_5;C8NBNACXX_2_9;24h;H
+Pelobates cultripes;24h_H;Pc_24h_H_7;Pc_24h_H_7_hybrid;24h;H
+Pelobates cultripes;24h_L;Pc_24h_L_4;C8NHKACXX_6_11;24h;L
+Pelobates cultripes;24h_L;Pc_24h_L_5;Pc_24h_L_5_hybrid;24h;L
+Pelobates cultripes;24h_L;Pc_24h_L_6;C8NHKACXX_7_7;24h;L
+Pelobates cultripes;48h_L;Pc_48h_L_10;Pc_48h_L_10_hybrid;48h;L
+Pelobates cultripes;48h_L;Pc_48h_L_14;C8HPDACXX_5_10;48h;L
+Pelobates cultripes;48h_L;Pc_48h_L_8;Pc_48h_L_8_hybrid;48h;L
+Pelobates cultripes;72h_L;Pc_72h_L_15;Pc_72h_L_15_hybrid;72h;L
+Pelobates cultripes;72h_L;Pc_72h_L_18;C8NBNACXX_2_8;72h;L
+Pelobates cultripes;72h_L;Pc_72h_L_20;Pc_72h_L_20_hybrid;72h;L
+Scaphiopus couchii;24h_H;Sc_24h_H_8;Sc_24h_H_8_hybrid;24h;H
+Scaphiopus couchii;24h_H;Sc_24h_H_9;C8NBNACXX_4_23;24h;H
+Scaphiopus couchii;24h_H;Sc_24h_H_x;Sc_24h_H_x_hybrid;24h;H
+Scaphiopus couchii;24h_L;Sc_24h_L_10;C8NBNACXX_1_14;24h;L
+Scaphiopus couchii;24h_L;Sc_24h_L_6;C8HR1ACXX_7_18;24h;L
+Scaphiopus couchii;24h_L;Sc_24h_L_7;C8HPDACXX_5_19;24h;L
+Scaphiopus couchii;48h_H;Sc_48h_H_6;C8NBNACXX_2_13;48h;H
+Scaphiopus couchii;48h_H;Sc_48h_H_7;C8NBNACXX_1_15;48h;H
+Scaphiopus couchii;48h_H;Sc_48h_H_8;C8HR1ACXX_7_16;48h;H
+Scaphiopus couchii;48h_L;Sc_48h_L_2;Sc_48h_L_2_hybrid;48h;L
+Scaphiopus couchii;48h_L;Sc_48h_L_6;C8NBNACXX_4_22;48h;L
+Scaphiopus couchii;48h_L;Sc_48h_L_7;C8NBNACXX_3_20;48h;L
