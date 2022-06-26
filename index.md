@@ -10,7 +10,7 @@ _add some information here about what the project and the purpose of this websit
 * [Running the TransPi pipeline](transpi.md)
 * [Finding repeats](repeats.md)
 * [Differential gene expression](DEG_24h.r)
-* [Extract the annotation of transcripts and join with their abundance]()
+* [Extract the annotation of transcripts of interest and join with their abundance](join_annotation_counts_piwis_agos.r)
 
 
 
