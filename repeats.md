@@ -108,6 +108,11 @@ This file was a pearl module with which there were incompatibilities.
   There was a warning because the N50 for the scaphiopus assembly is low, which might not be ideal for repeatmodeler. So we downloaded the scaphiopus genome (from     https://www.ncbi.nlm.nih.gov/genome/?term=scaphiopus+couchii) and built a new database with it in the repeat_modeler folder. Then we ran the repeatmodeler with this database:
 
   ```{bash}
+  mkdir Sco_genome
+  cd Sco_genome
+  wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/009/364/435/GCA_009364435.1_usc_Scouchii_0.1/GCA_009364435.1_usc_Scouchii_0.1_genomic.fna.gz
+  
+  cd ../repeat_modeler
   BuildDatabase -name scaphiopus_gn ../Sco_genome/GCA_009364435.1_usc_Scouchii_0.1_genomic.fna.gz
   nohup RepeatModeler -database scouchii_gn -pa 10 -LTRStruct >& run_scouchii_gn.out &
   ```
