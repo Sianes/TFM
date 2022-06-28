@@ -258,3 +258,42 @@ for(i in names(res_scaph)){
 saveRDS(res_scaph, "./results_deseq2/deseq2_results_scaph.rds")
 saveRDS(dds_scaph_24h, "./results_deseq2/deseq2_dds_scaph.rds")
 
+#Obtaining annotations
+  
+#extract transcript ids of degs
+
+#pelobates
+degs_pel_activated<-res_pel %>%
+  as_tibble(rownames = "transcript_id") %>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange>1) 
+
+degs_pel_repressed<-res_pel %>%
+  as_tibble(rownames = "transcript_id") %>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange< -1) 
+
+#scaphiopus
+degs_scaph_activated<-res_scaph %>%
+  as_tibble(rownames = "transcript_id") %>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange>1)
+
+degs_scaph_repressed<-res_scaph %>%
+  as_tibble(rownames = "transcript_id") %>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange< -1) 
+
+pel.agpw.notes.transcript.abundance<-read.csv2("./diamond/final_agpw_pel.csv" )
+scaph.agpw.notes.transcript.abundance<-read.csv2("./diamond/final_agpw_scaph.csv" )
+
+
+degs_pel_activated_anotaciones<- left_join(degs_pel_activated, pel.agpw.notes.transcript.abundance,"transcript_id"  )
+degs_pel_repressed_anotaciones<- left_join(degs_pel_repressed, pel.agpw.notes.transcript.abundance,"transcript_id"  )
+
+degs_scaph_activated_anotaciones<- left_join(degs_scaph_activated, scaph.agpw.notes.transcript.abundance,"transcript_id"  )
+degs_scaph_repressed_anotaciones<- left_join(degs_scaph_repressed, scaph.agpw.notes.transcript.abundance,"transcript_id"  )
+#solo hay piwis en degs_scaph_repressed_anotaciones
+
+degs_scaph_repressed_piwis <- degs_scaph_repressed_anotaciones[grep(pattern = "piwi|ago", degs_scaph_repressed_anotaciones$name), ]
+# todos son el mismo, piwi 3
