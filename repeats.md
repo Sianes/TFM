@@ -123,10 +123,14 @@ This file was a pearl module with which there were incompatibilities.
 We ran RepeatMasker with the -families.fa file generated using repeatmodeler:
 
 ```{bash}
-mkdir repeatmasker_chirs
-cd repeatmasker_chris 
-RepeatMasker ../Pcu23_genome/Pcu23_ss_only.fa -pa 15 -s -lib ../repeat_modeler/pelobates-families.fa -dir /home/igmestre/TFM_Paula/repeatmasker_chris
-*RepeatMasker ../Sco_genome/GCA_009364435.1_usc_Scouchii_0.1_genomic.fa -pa 15 -s -lib ../repeat_modeler/scaphiopus-families.fa -dir /home/igmestre/TFM_Paula/repeatmasker_chris
+mkdir repeatmasker_pc23
+cd repeatmasker_pc23
+RepeatMasker ../Pcu23_genome/Pcu23_ss_only.fa -pa 15 -s -lib ../repeat_modeler/pelobates-families.fa -dir ./
+cd ../
+
+mkdir repeatmasker_scouchii_gn
+cd ../repeatmasker_scouchii_gn
+RepeatMasker ../Sco_genome/GCA_009364435.1_usc_Scouchii_0.1_genomic.fa -pa 15 -s -lib ../repeat_modeler/scaphiopus-families.fa -dir ./
 ```
 
 
