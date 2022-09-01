@@ -8,7 +8,7 @@ Below are links to the different workflows for my TFM:
 
 * [Study System](Study_system.md)
 * [Running the TransPi pipeline](transpi.md)
-* [Finding repeats](repeats.md)
+* [Finding Repetitive Transposable Elements](repeats.md)
 * [Functional annotations](functional_annotation_blastx.md)
 * [Transcript quantification and exportation]()
 * [Differential gene expression](DEG_24h.r)
