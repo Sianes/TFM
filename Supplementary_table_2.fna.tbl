@@ -1,0 +1,59 @@
+==================================================
+file name: GCA_009364435.1_usc_Scouchii_0.1_genomic.fna
+sequences:       1378905
+total length:  484148731 bp  (484148449 bp excl N/X-runs)
+GC level:         40.44 %
+bases masked:  131307692 bp ( 27.12 %)
+==================================================
+               number of      length   percentage
+               elements*    occupied  of sequence
+--------------------------------------------------
+Retroelements       148407     19520731 bp    4.03 %
+   SINEs:              367        35722 bp    0.01 %
+   Penelope           4130       739487 bp    0.15 %
+   LINEs:           129151     15933874 bp    3.29 %
+    CRE/SLACS            0            0 bp    0.00 %
+     L2/CR1/Rex     108678     12264266 bp    2.53 %
+     R1/LOA/Jockey       0            0 bp    0.00 %
+     R2/R4/NeSL       2426       297088 bp    0.06 %
+     RTE/Bov-B         806       144840 bp    0.03 %
+     L1/CIN4         12985      2461387 bp    0.51 %
+   LTR elements:     18889      3551135 bp    0.73 %
+     BEL/Pao           100        16762 bp    0.00 %
+     Ty1/Copia         374        33484 bp    0.01 %
+     Gypsy/DIRS1     11226      2405400 bp    0.50 %
+       Retroviral     5327       719951 bp    0.15 %
+
+DNA transposons     137285     15404482 bp    3.18 %
+   hobo-Activator    25626      2418570 bp    0.50 %
+   Tc1-IS630-Pogo   107946     12517457 bp    2.59 %
+   En-Spm                0            0 bp    0.00 %
+   MuDR-IS905            0            0 bp    0.00 %
+   PiggyBac           1837       295095 bp    0.06 %
+   Tourist/Harbinger     0            0 bp    0.00 %
+   Other (Mirage,        0            0 bp    0.00 %
+    P-element, Transib)
+
+Rolling-circles       1186        78543 bp    0.02 %
+
+Unclassified:       1018370     91502137 bp   18.90 %
+
+Total interspersed repeats:   126427350 bp   26.11 %
+
+
+Small RNA:            1944       225289 bp    0.05 %
+
+Satellites:            695       156740 bp    0.03 %
+Simple repeats:      70061      4019683 bp    0.83 %
+Low complexity:       7749       400087 bp    0.08 %
+==================================================
+
+* most repeats fragmented by insertions or deletions
+  have been counted as one element
+
+
+RepeatMasker version 4.1.2-p1 , default mode
+
+run with rmblastn version 2.11.0+
+The query was compared to classified sequences in ".../scouchii_gn-families.fa"
+FamDB:
