@@ -1,7 +1,7 @@
 # Study System
 
 ## Pelobates cultriples
-- info + photos
+![](/images/adult.png)
 
 ## Scaphiopus cochii
 - info + photos
