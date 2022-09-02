@@ -16,7 +16,7 @@ Below are links to the different workflows for my TFM:
 * [Transcript quantification and exportation]()
 * [Differential gene expression](DEG_24h.r)
 * [Extract the annotation of transcripts of interest and join with their abundance](join_annotation_counts_piwis_agos.r)
-* [Functional enrichment analysis](functional_enrichment.html)
+* [Functional enrichment analysis](Functional_enrichment.html)
 * [Supplementary information](supplementary_material.md)
 
 
