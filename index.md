@@ -4,7 +4,7 @@
 This is the front page of my git website dedicated to my TFM. My project consisted in measuring the abundance of transposable elements (TEs) in the genome of two closely related toad species, as well as the activity of TEs silencing genes.
 
 Here I present an schematic image of my analysis.\
-[](workflow.jpg)
+![](workflow.jpg)
 
 Below are links to the different workflows for my TFM:
 
