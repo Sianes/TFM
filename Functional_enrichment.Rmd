@@ -1,0 +1,253 @@
+---
+title: "Functional enrichment analysis"
+author: 
+- name: "Paula Sianes"
+  affiliation: "Estación Biológica de Doñana"
+date: '2022-09-01'
+output: html_document
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+lang: es
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<div style="text-align: justify">
+
+## Functional enrichment analysis
+
+Once we have done the differential gene expression, we have some over and under expressed genes. To make sense over this large list of genes we performed a functional enrichment analysis. We used different bases of this kind: the [Gene Ontology](http://geneontology.org/), the [Kyoto Encyclopedia of Genes and Genomes](https://www.genome.jp/kegg/) and the [Reactome](https://reactome.org/).
+To perform this analysis we used our list of differential expressed genes, and the list of blastx anotation of our transcripts as background.
+
+#### Preparing environment
+
+```{r,eval=FALSE, echo=TRUE}
+#set working directory (or to source file location)
+setwd("C:/Users/Usuario/Desktop/master_omicas/TFM/")
+#install and load packages
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+pacman::p_load(tidyverse,gprofiler2,ggplot2,GO.db, datasets, dplyr, KEGGgraph,readr)
+
+```
+
+## Load and prepare data
+
+Differential gene expression data was already done with DESeq2 but for obtaining the background annotations we have to take the results of the diamond blastx we've done before and search the annotations online with gProfiler.
+
+```{r, eval=FALSE, echo=TRUE}
+# The lists of DEG results from the previous analysis
+
+  #Pelobates cultriples
+res_pel<-readRDS(file ="./results_deseq2/deseq2_results_pel.rds" ) 
+
+  #Scaphiopus couchii
+res_scaph<-readRDS(file ="./results_deseq2/deseq2_results_scaph.rds" )
+
+
+# The annotations
+diamondx_pelobates<-read_tsv("diamond/pelobates_blastx_matches.tsv", col_names = F)
+diamondx_scaphiopus<-read_tsv("diamond/scaphiopus_blastx_matches.tsv", col_names = F)
+
+#Preparing the matrixs
+diamondx_pelobates<-diamondx_pelobates %>%
+  dplyr::group_by(X1) %>%
+  dplyr::filter(X11 == max(X11)) %>%
+  dplyr::select(X1, X2) %>%
+  dplyr::rename(transcript_id=X1,
+                ensembl_peptide_id=X2) %>%
+  mutate(ensembl_peptide_id=str_remove(ensembl_peptide_id, pattern="\\.\\d+"))
+
+diamondx_scaphiopus<-diamondx_scaphiopus %>%
+  dplyr::group_by(X1) %>%
+  dplyr::filter(X11 == max(X11)) %>%
+  dplyr::select(X1, X2) %>%
+  dplyr::rename(transcript_id=X1,
+                ensembl_peptide_id=X2) %>%
+  mutate(ensembl_peptide_id=str_remove(ensembl_peptide_id, pattern="\\.\\d+"))
+
+#set the url where to search, with the same database we used for blast
+set_base_url("https://biit.cs.ut.ee/gprofiler_archive3/e105_eg52_p16")
+
+#we search in the annotations information with gconvert and eliminate posible duplicates.
+anotaciones_pelobates_blastx<-gprofiler2::gconvert(diamondx_pelobates$ensembl_peptide_id, organism = "xtropicalis", target="UNIPROT_GN", mthreshold = 1)
+anotaciones_scaphiopus_blastx<-gprofiler2::gconvert(diamondx_scaphiopus$ensembl_peptide_id, organism = "xtropicalis", target="UNIPROT_GN", mthreshold = 1)
+anotaciones_pelobates<-anotaciones_pelobates_blastx[!duplicated(anotaciones_pelobates_blastx), ]
+anotaciones_scaphiopus<-anotaciones_scaphiopus_blastx[!duplicated(anotaciones_scaphiopus_blastx), ]
+
+#change name to the ensembl name column
+colnames(anotaciones_pelobates)[2]<-"ensembl_peptide_id"
+colnames(anotaciones_scaphiopus)[2]<-"ensembl_peptide_id"
+
+# obtaining the background
+PEL_bg<-anotaciones_pelobates$ensembl_peptide_id
+str(PEL_bg) #look for correct format
+SCAPH_bg<-anotaciones_scaphiopus$ensembl_peptide_id
+```
+
+
+## Extracting activated and repressed genes of each species
+
+```{r, eval=FALSE, echo=TRUE}
+
+#transform results into data.frames
+res_pel0<-as.data.frame(res_pel)
+res_scaph0<-as.data.frame(res_scaph)
+
+#filter by padj and log2foldchange and get the transcript names (named as gene)
+activated_pel<- res_pel0%>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange>1)%>%
+  as_tibble(rownames = "gene") %>%
+  pull(gene)
+  
+str(activated_pel)
+
+activated_scaph<- res_scaph0%>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange>2)%>%
+  as_tibble(rownames = "gene") %>%
+  pull(gene)
+
+repressed_pel<- res_pel0%>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange< -1)%>%
+  as_tibble(rownames = "gene") %>%
+  pull(gene)
+
+
+repressed_scaph<- res_scaph0%>%
+  filter(padj<0.05) %>%
+  filter(log2FoldChange< -2)%>%
+  as_tibble(rownames = "gene") %>%
+  pull(gene)
+
+```
+
+As DESeq2 was donde with transcript names, to extract ENSEMBL gene/peptide names we need a matrix with both of them. 
+
+```{r, eval=FALSE, echo=TRUE}
+#change colnames to make left_join
+colnames(anotaciones_pelobates)[2]<-"ensembl_peptide_id"
+colnames(anotaciones_scaphiopus)[2]<-"ensembl_peptide_id"
+
+#we used diamondx matrix that has trandcript and ensembl name and the annotation matrix that includes ensembl name and annotation. Using left join we join both matrix by ensembl id and have the transcripts names and the anottation together.
+
+pelobates_anotaciones_transcript<-left_join(diamondx_pelobates, anotaciones_pelobates, by= "ensembl_peptide_id")
+
+#we reduced the number of columns
+pelobates_anotaciones_transcript<-pelobates_anotaciones_transcript[,c(1,2,5,6,7)]
+
+#we eliminate posible duplications
+pelobates_anotaciones_transcript<-pelobates_anotaciones_transcript[!duplicated(pelobates_anotaciones_transcript), ]
+
+#and repeat with S.couchii
+scaphiopus_anotaciones_transcript<-left_join(diamondx_scaphiopus, anotaciones_scaphiopus, by= "ensembl_peptide_id")
+scaphiopus_anotaciones_transcript<-scaphiopus_anotaciones_transcript[,c(1,2,5,6,7)]
+scaphiopus_anotaciones_transcript<-scaphiopus_anotaciones_transcript[!duplicated(scaphiopus_anotaciones_transcript), ]
+
+#we repeat the process with activated and repressed  genes to obtain their transcript_id, ensembl name and annotations in the same matrix
+
+#convert to data frame
+activated_pel<-as.data.frame(activated_pel)
+#change the colname
+colnames(activated_pel)[1]<-"transcript_id"
+#join the matrixes
+pel_act<-left_join(as.data.frame(activated_pel),pelobates_anotaciones_transcript, by="transcript_id")
+#select ensembl name
+pel_act<-pel_act[,2]
+
+#repeat with other gene sets
+repressed_pel<-as.data.frame(repressed_pel)
+colnames(repressed_pel)[1]<-"transcript_id"
+pel_rep<-left_join(as.data.frame(repressed_pel),pelobates_anotaciones_transcript, by="transcript_id")
+pel_rep<-pel_rep[,2]
+  
+activated_scaph<-as.data.frame(activated_scaph)
+colnames(activated_scaph)[1]<-"transcript_id"
+scaph_act<-left_join(as.data.frame(activated_scaph),scaphiopus_anotaciones_transcript, by="transcript_id")
+scaph_act<-scaph_act[,2]
+
+repressed_scaph<-as.data.frame(repressed_scaph)
+colnames(repressed_scaph)[1]<-"transcript_id"
+scaph_rep<-left_join(as.data.frame(repressed_scaph),scaphiopus_anotaciones_transcript, by="transcript_id")
+scaph_rep<-scaph_rep[,2]
+
+#exclude Nas
+scaph_act<-na.exclude(scaph_act)
+pel_act<-na.exclude(pel_act)
+pel_rep<-na.exclude(pel_rep)
+scaph_rep<-na.exclude(scaph_rep)
+
+```
+
+
+## Functional enrichment analysis
+
+We are now ready to run the functional enrichment analysis. We will use [g:Profiler])(https://biit.cs.ut.ee/gprofiler/), because it plays particularly well with R and with Ensembl gene/peptide annotations.  
+
+```{r, eval=FALSE, echo=TRUE}
+
+# run the analysis
+res_pel_act<-gost(multi_query = FALSE, # returns separate results tables for multiquery
+              custom_bg = PEL_bg, # our background
+              query=pel_act, # our list of gene sets
+              organism="xtropicalis", # the organism our annotations belong to
+              exclude_iea = FALSE, # include GO terms that were electronically assigned
+              correction_method = "gSCS", # the recommended multiple testing correction.
+              sources=c("GO:BP","GO:CC","GO:MF", "KEGG","REAC"), # the functional sets we are interested in 
+              evcodes=FALSE, ## evcodes TRUE needed for downstream analysis like enrichment maps in Cytoscape, but this takes longer.
+              significant= FALSE) # return all terms, not just the significant ones
+
+
+res_pel_rep<-gost(multi_query = FALSE, 
+                  custom_bg = PEL_bg, 
+                  query=pel_rep, 
+                  organism="xtropicalis", 
+                  exclude_iea = FALSE, 
+                  correction_method = "gSCS", 
+                  sources=c("GO:BP","GO:CC","GO:MF", "KEGG","REAC"), 
+                  evcodes=FALSE, 
+                  significant= FALSE)
+
+
+res_scaph_act<-gost(multi_query = FALSE, 
+                  custom_bg = SCAPH_bg, 
+                  query=scaph_act, 
+                  organism="xtropicalis", 
+                  exclude_iea = FALSE, 
+                  correction_method = "gSCS", 
+                  sources=c("GO:BP","GO:CC","GO:MF", "KEGG","REAC"), 
+                  evcodes=FALSE, 
+                  significant= FALSE) 
+
+
+res_scaph_rep<-gost(multi_query = FALSE, 
+                  custom_bg = SCAPH_bg, 
+                  query=scaph_rep, 
+                  organism="xtropicalis", 
+                  exclude_iea = FALSE, 
+                  correction_method = "gSCS", 
+                  sources=c("GO:BP","GO:CC","GO:MF", "KEGG","REAC"), 
+                  evcodes=FALSE,
+                  significant= FALSE)
+
+
+#plots
+p <- gostplot(res_pel_rep, interactive = FALSE)
+publish_gostplot(p, highlight_terms = "KEGG:04910")
+
+
+sact<-gostplot(res_scaph_act, interactive = F)
+publish_gostplot(sact, highlight_terms = c("GO:0043043", "GO:0006518", "REAC:R-XTR-8953854", "GO:0003723"))
+
+srep<-gostplot(res_scaph_rep, interactive = F)
+publish_gostplot(srep, highlight_terms = c("GO:0034660","GO:0034470", "GO:0031047"))
+
+```
+
+
+
