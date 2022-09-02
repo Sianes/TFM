@@ -4,6 +4,6 @@
 ![](/images/adult.png)
 
 ## Scaphiopus cochii
-- info + photos
+![/images/S_couchii.png]
 
 ## Samples
