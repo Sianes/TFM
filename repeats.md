@@ -1,6 +1,6 @@
 # Finding Repetitive Elements in Transcriptomes
 
-For the purpose of characterizing repetitive elements in the transcriptomes we will use [RepeatMasker](https://www.repeatmasker.org/) and [RepeatModeler](https://www.repeatmasker.org/RepeatModeler/).
+For the purpose of characterizing repetitive elements in the genome and transcriptomes we will use [RepeatMasker](https://www.repeatmasker.org/) and [RepeatModeler](https://www.repeatmasker.org/RepeatModeler/).
 
 
 1. Install software
@@ -118,7 +118,7 @@ This file was a pearl module with which there were incompatibilities.
   ```
   
 
-7. Run RepeatMasker with the RepeatModeler databases
+7. Run RepeatMasker in genomes with the RepeatModeler databases
 
 We ran RepeatMasker with the -families.fa file generated using repeatmodeler:
 
@@ -137,3 +137,7 @@ RepeatMasker ../Sco_genome/GCA_009364435.1_usc_Scouchii_0.1_genomic.fa -pa 15 -s
 8. Final Results
 
 We obtained about 58% repeats in P. cultriples genome and around 27% repeats in S. couchii genome. These values are more consistent in relation to their genome size, if we compare with the results of other amphibians.
+
+9. Run RepeatMasker in transcriptomes
+
+We also launch the commands to obtain the abundance of transposable elements in the transcriptome, i.e. their transcriptional activity at development time, but is still running...
