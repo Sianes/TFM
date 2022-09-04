@@ -1,4 +1,4 @@
-# TFM - Abundance, but not regulation of transposable elements differs between frogs with widely different genome sizes and developmental plasticity
+# Abundance, but not regulation of transposable elements differs between frogs with widely different genome sizes and developmental plasticity
 ### Paula Sianes Castillo
 
 This is the front page of my git website dedicated to my TFM. My project consisted in measuring the abundance of transposable elements (TEs) in the genome of two closely related toad species, as well as the activity of TEs silencing genes.
