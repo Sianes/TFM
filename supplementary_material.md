@@ -1,9 +1,10 @@
 ## Here you can access to my suplementary data:
 
 **Figures**
-1. Schematic workflow
+1. Schematic workflow\
 [Supplementary Figure 1](workflow.jpg)
 
+\
 **Tables**
 1. RepeatMasker results for *P. cultripes*\
 [Supplementary table 1](Supplementary_table_1.fa.tbl)
