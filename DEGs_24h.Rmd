@@ -1,0 +1,322 @@
+---
+title: "Differential Gene Expression at 24 h"
+author: 
+- name: "Paula Sianes"
+  affiliation: "Estación Biológica de Doñana"
+date: '2022-09-01'
+output: html_document
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+lang: es
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<div style="text-align: justify">
+
+## Differential Gene expression at 24 h
+
+Once we have the counts from each sample it's time to make a differential gene expression analysis to find the activated and repressed genes. We are interested in making a comparison between high and low water conditions at 24 h.
+
+#### Preparing the environment
+
+```{r,eval=FALSE, echo=TRUE}
+#set working directory (or to source file location)
+setwd("C:/Users/Usuario/Desktop/master_omicas/TFM/")
+#install and load packages
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+pacman::p_load(tidyverse,gprofiler2,ggplot2,GO.db, datasets, dplyr, KEGGgraph,readr)
+BiocManager::install("DESeq2")
+library(DESeq2)
+```
+
+
+#### Load and prepare data
+
+We started by loading the quantification data from `salmon` and the design matrix of the experiment
+
+```{r, eval=FALSE, echo=TRUE}
+
+# Load data
+counts_pelobates<-readRDS(file = "salmon/results/salmon_pelobates_counts.rds")
+head(counts_pelobates$abundance)
+counts_scaphiopus<-readRDS(file= "salmon/results/salmon_scaphiopus_counts.rds")
+head(counts_scaphiopus$abundance)
+
+# Load experimental design matrix
+samples_treatment<-read.csv("salmon/results/samples_separate_treatment.csv", sep = ";")
+colnames(samples_treatment)[1]<-"species"
+colnames(samples_treatment)[4]<-"sample_id"
+table(samples_treatment[,c("species","treatment")])
+table(samples_treatment[,c("time","water_level")])
+table(samples_treatment[,c("species","time","water_level")])
+
+#remove abundance 0
+pelob_no0<-counts_pelobates$abundance %>%
+  as.data.frame() %>%
+  filter_all(any_vars(. != 0))
+scaph_no0<-counts_scaphiopus$abundance %>%
+  as.data.frame() %>%
+  filter_all(any_vars(. != 0))
+
+
+```
+
+
+#### Subset data
+
+We didn't need all the data of our matrix, so we had to filter the data we needed.
+
+```{r, eval=FALSE, echo=TRUE}
+
+## P. CULTRIPES
+# we create the comparison matrix, choose the species and compare 24h low vs high water level
+samples_pel_24h <- samples_treatment %>%
+  filter(time=="24h") %>%
+  filter(species=="Pelobates cultripes")
+
+## filter counts_pelobates matrices
+counts_pelobates_24h<-counts_pelobates
+counts_pelobates_24h$abundance<-counts_pelobates$abundance[,samples_pel_24h$sample_id]
+counts_pelobates_24h$counts<-counts_pelobates$counts[,samples_pel_24h$sample_id]
+counts_pelobates_24h$length<-counts_pelobates$length[,samples_pel_24h$sample_id]
+
+## S. COUCHII
+samples_scaph_24h <- samples_treatment %>%
+  filter(time=="24h") %>%
+  filter(species=="Scaphiopus couchii")
+
+counts_scaphiopus_24h<-counts_scaphiopus
+counts_scaphiopus_24h$abundance<-counts_scaphiopus$abundance[,samples_scaph_24h$sample_id]
+counts_scaphiopus_24h$counts<-counts_scaphiopus$counts[,samples_scaph_24h$sample_id]
+counts_scaphiopus_24h$length<-counts_scaphiopus$length[,samples_scaph_24h$sample_id]
+
+```
+
+
+## Make a DESeqDataSet object
+
+We can now combine the design matrix and the expression data into a format that DESeq2 likes. DESeq2 makes its own normalization so we didn't need to make it before. 
+
+```{r, eval=FALSE, echo=TRUE}
+
+## P. CULTRIPES 
+
+#Apply deseq2
+library(DESeq2)
+dds_pel_24h <- DESeqDataSetFromTximport(counts_pelobates_24h,
+                                colData = samples_pel_24h,
+                                design = ~ water_level)
+
+#look at the file
+dds_pel_24h
+assays(dds_pel_24h) 
+counts(dds_pel_24h) %>% head()
+
+
+## Differential Expression Analysis
+#add info
+dds_pel_24h <- DESeq(dds_pel_24h)
+dds_pel_24h
+resultsNames(dds_pel_24h)
+
+## Examining differential expression analysis results
+res_pel<-results(dds_pel_24h)
+
+#extract the results of comparisons
+results(dds_pel_24h, contrast=c("water_level","H","L")) # si sale
+
+# single comparison, here using a padj cutoff of 0.05, el alpha
+summary(res_pel, alpha=0.05)
+
+
+# DEseq2 quality check
+
+# P-value distributions
+hist(res_pel$pvalue, breaks=50, col="grey", main="") 
+
+# Dispersion plot
+plotDispEsts(dds_pel_24h)
+
+#plot MA
+DESeq2::plotMA(dds_pel_24h)
+
+
+res_pel %>%
+  as.data.frame() %>%
+  ggplot(aes(baseMean, log2FoldChange, colour=padj)) +
+  geom_point(size=1) + 
+  scale_y_continuous(limits=c(-3, 3), oob=squish) + # oob from the scales package is needed to "squish" points falling outside the axis limits
+  scale_x_log10() +
+  geom_hline(yintercept = 0, colour="red", size=1, linetype="longdash") +
+  labs(x="mean of normalized counts", y="log fold change") +
+  scale_colour_viridis(direction=-1, trans='sqrt') +
+  geom_density_2d(colour="blue", size=0.5) +
+  theme_bw()
+
+## Exporting data
+# make a results folder if it does not yet exist
+dir.create("results_deseq2", showWarnings = FALSE)
+
+# export individual results tables
+for(i in names(res_pel)){
+  write.csv(as.data.frame(res_pel[[i]]), paste0("./results_deseq2/deseq2_pel_", i,".csv"))
+}
+# export .rds files
+saveRDS(res_pel, "./results_deseq2/deseq2_results_pel.rds")
+saveRDS(dds_pel_24h, "./results_deseq2/deseq2_dds_pel.rds")
+
+
+## S. COUCHII
+
+#Apply deseq2
+dds_scaph_24h <- DESeqDataSetFromTximport(counts_scaphiopus_24h,
+                                        colData = samples_scaph_24h,
+                                        design = ~ water_level)
+
+#Look at the file
+dds_scaph_24h
+assays(dds_scaph_24h) 
+counts(dds_scaph_24h) %>% head()
+
+
+## Differential Expression Analysis
+#add info 
+dds_scaph_24h <- DESeq(dds_scaph_24h)
+dds_scaph_24h
+resultsNames(dds_scaph_24h)
+
+## Examining differential expression analysis results
+res_scaph<-results(dds_scaph_24h)
+res_scaph 
+
+#extract the results of comparisons
+results(dds_scaph_24h, contrast=c("water_level","H","L"))
+
+# single comparison, here using a padj cutoff of 0.05, el alpha
+summary(res_scaph, alpha=0.05)
+
+# DEseq2 quality check
+
+# P-value distributions
+hist(res_scaph$pvalue, breaks=50, col="grey", main="") 
+
+# Dispersion plot
+plotDispEsts(dds_scaph_24h)
+
+#plot MA
+DESeq2::plotMA(dds_scaph_24h)
+
+
+res_scaph %>%
+  as.data.frame() %>%
+  ggplot(aes(baseMean, log2FoldChange, colour=padj)) +
+  geom_point(size=1) + 
+  scale_y_continuous(limits=c(-3, 3), oob=squish) + # oob from the scales package is needed to "squish" points falling outside the axis limits
+  scale_x_log10() +
+  geom_hline(yintercept = 0, colour="red", size=1, linetype="longdash") +
+  labs(x="mean of normalized counts", y="log fold change") +
+  scale_colour_viridis(direction=-1, trans='sqrt') +
+  geom_density_2d(colour="blue", size=0.5) +
+  theme_bw()
+
+## Exporting data
+
+# export individual results tables
+for(i in names(res_scaph)){
+  write.csv(as.data.frame(res_scaph[[i]]), paste0("./results_deseq2/deseq2_scaph_", i,".csv"))
+}
+# export .rds files
+saveRDS(res_scaph, "./results_deseq2/deseq2_results_scaph.rds")
+saveRDS(dds_scaph_24h, "./results_deseq2/deseq2_dds_scaph.rds")
+
+```
+
+#### Volcanoplots
+
+Once we have the differential gene expression results we can make volcanoplots with our interest genes to see in which level of expression they are.
+
+
+```{r, echo=TRUE, eval=FALSE}
+
+# obtaining genes of interest
+# load gconvert
+gconvert_pel<- read.csv2("./diamond/gconvert_anotaciones_pel.csv") %>%
+  select(ensembl_peptide_id, name)
+gconvert_scaph<- read.csv2("gconvert_anotaciones_scaph.csv") %>%
+  select(ensembl_peptide_id, name)
+
+# left_join with diamond
+diamondx_pelobates<-read_tsv("pelobates_blastx_matches.tsv", col_names = F)
+diamondx_scaphiopus<-read_tsv("scaphiopus_blastx_matches.tsv", col_names = F)
+
+diamondx_pelobates<-diamondx_pelobates %>%
+  dplyr::group_by(X1) %>%
+  dplyr::filter(X11 == max(X11)) %>%
+  dplyr::select(X1, X2) %>%
+  dplyr::rename(transcript_id=X1,
+                ensembl_peptide_id=X2) %>%
+  mutate(ensembl_peptide_id=str_remove(ensembl_peptide_id, pattern="\\.\\d+"))
+
+diamondx_scaphiopus<-diamondx_scaphiopus %>%
+  dplyr::group_by(X1) %>%
+  dplyr::filter(X11 == max(X11)) %>%
+  dplyr::select(X1, X2) %>%
+  dplyr::rename(transcript_id=X1,
+                ensembl_peptide_id=X2) %>%
+  mutate(ensembl_peptide_id=str_remove(ensembl_peptide_id, pattern="\\.\\d+"))
+
+pel_anotaciones<- left_join(gconvert_pel, diamondx_pelobates,"ensembl_peptide_id"  )
+scaph_anotaciones<- left_join(gconvert_scaph, diamondx_scaphiopus,"ensembl_peptide_id"  )
+
+#filter ago, piwi, nurd complex proteins
+pel_anotaciones_genes_interes <- pel_anotaciones[grep(pattern = "piwi|ago|chd4|hdac1|hdac2|mbd2|mbd3|mta1|mta2|mta3|gatad2a|gatad2b|rbbp4|rbbp7", pel_anotaciones$name), ]
+#delete magoh genes
+pel_anotaciones_genes_interes <- pel_anotaciones_genes_interes[grep(pattern = "magoh", invert = TRUE, pel_anotaciones_genes_interes$name), ]
+
+scaph_anotaciones_genes_interes <- scaph_anotaciones[grep(pattern = "piwi|ago|chd4|hdac1|hdac2|mbd2|mbd3|mta1|mta2|mta3|gatad2a|gatad2b|rbbp4|rbbp7", scaph_anotaciones$name), ]
+#delete magoh genes
+scaph_anotaciones_genes_interes <- scaph_anotaciones_genes_interes[grep(pattern = "magoh", invert = TRUE, scaph_anotaciones_genes_interes$name), ]
+
+#delete duplicates
+no_duplicado_genes_int_pel<-pel_anotaciones_genes_interes[!duplicated(pel_anotaciones_genes_interes), ]
+no_duplicado_genes_int_scaph<-scaph_anotaciones_genes_interes[!duplicated(scaph_anotaciones_genes_interes), ]
+
+
+## VOLCANOPLOTS
+res_pel %>%
+  as_tibble(rownames = "transcript_id") %>%
+  drop_na(padj) %>% # drop all genes with NAs
+  #filter(padj<0.99) %>% # reduce the number of points that need to be plotted
+  mutate(sig= padj<0.05 & abs(log2FoldChange)>=1) %>% # make a variable to indicate if a gene is significant based on a specific thresholds
+  left_join(no_duplicado_genes_int_pel, by=c("transcript_id")) %>% # add annotations
+  ggplot(aes(x=log2FoldChange, y=-log10(padj), color=sig)) +
+  geom_point(alpha=0.75, shape=16) +
+  geom_point(data=. %>% filter(!is.na(name)), shape=1, size=3, color="black") +
+  geom_text_repel(aes(label=name), size=3, max.overlaps = Inf, color="black") +
+  xlim(-10,10) +
+  ggtitle("DEGs in pel 24h high-low") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+res_scaph %>%
+  as_tibble(rownames = "transcript_id") %>%
+  filter(padj<0.9) %>%
+  drop_na(padj) %>% # drop all genes with NAs
+  #filter(padj<0.99) %>% # reduce the number of points that need to be plotted
+  mutate(sig= padj<0.05 & abs(log2FoldChange)>=2) %>% # make a variable to indicate if a gene is significant based on a specific thresholds
+  left_join(no_duplicado_genes_int_scaph, by=c("transcript_id")) %>% # add annotations
+  ggplot(aes(x=log2FoldChange, y=-log10(padj), color=sig)) +
+  geom_point(alpha=0.75, shape=16) +
+  geom_point(data=. %>% filter(!is.na(name)), shape=1, size=3, color="black") +
+  geom_text_repel(aes(label=name), size=3, max.overlaps = Inf, color="black") +
+  xlim(-10,10) +
+  ggtitle("DEGs in scaph 24h high-low") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
